@@ -1,4 +1,5 @@
 .venv
 .env
+.secrets
 my_games
 __pycache__
