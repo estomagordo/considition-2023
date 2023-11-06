@@ -72,9 +72,15 @@ def main():
             for key in mapEntity[LK.locations]:
                 location = mapEntity[LK.locations][key]
                 name = location[LK.locationName]
-
                 salesVolume = location[LK.salesVolume]
+                footfall_scale = location[LK.footfall_scale]
+
                 if salesVolume > 100:
+                    solution[LK.locations][name] = {
+                        LK.f9100Count: 1,
+                        LK.f3100Count: 0,
+                    }
+                elif footfall_scale > 0:
                     solution[LK.locations][name] = {
                         LK.f9100Count: 0,
                         LK.f3100Count: 1,

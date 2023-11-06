@@ -26,6 +26,7 @@ class LocationKeys:
     salesCapacity = "salesCapacity"
     leasingCost = "leasingCost"
     revenue = "revenue"
+    footfall_scale = 'footfallScale'
 
 
 @dataclass
