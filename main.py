@@ -7,10 +7,8 @@ from data_keys import (
     LocationKeys as LK,
     ScoringKeys as SK,
 )
-from dotenv import load_dotenv
 
-load_dotenv()
-apiKey = os.environ["apiKey"]
+api_key = ''
 game_folder = "my_games"
 
 
@@ -20,7 +18,8 @@ def main():
         os.makedirs(game_folder)
 
     try:
-        apiKey = os.environ["apiKey"]
+        with open('.secrets') as f:
+            api_key = f.readline()
     except Exception as e:
         raise SystemExit("Did you forget to create a .env file with the apiKey?")
 
@@ -61,7 +60,7 @@ def main():
 
     if mapName:
         ##Get map data from Considition endpoint
-        mapEntity = getMapData(mapName, apiKey)
+        mapEntity = getMapData(mapName, api_key)
         ##Get non map specific data from Considition endpoint
         generalData = getGeneralData()
 
@@ -97,7 +96,7 @@ def main():
             # Submit and and get score from Considition app
             print(f"Submitting solution to Considtion 2023 \n")
 
-            scoredSolution = submit(mapName, solution, apiKey)
+            scoredSolution = submit(mapName, solution, api_key)
             if scoredSolution:
                 print("Successfully submitted game")
                 print(f"id: {scoredSolution[SK.gameId]}")
