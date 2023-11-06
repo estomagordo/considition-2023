@@ -5,7 +5,7 @@ from data_keys import (
     ScoringKeys as SK,
 )
 
-domain = os.environ["domain"]
+domain = 'https://api.considition.com'
 
 
 def getMapData(mapName, apiKey):
