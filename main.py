@@ -90,7 +90,7 @@ def main():
             print(f"Enter {id_} into visualization.ipynb for local vizualization ")
 
             # Store solution locally for visualization
-            with open(f"{game_folder}\{id_}.json", "w", encoding="utf8") as f:
+            with open(f"{game_folder}/{id_}.json", "w", encoding="utf8") as f:
                 json.dump(score, f, indent=4)
 
             # Submit and and get score from Considition app
