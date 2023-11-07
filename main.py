@@ -1,5 +1,6 @@
 import os
 import json
+from copy import deepcopy
 from scoring import calculateScore
 from api import getGeneralData, getMapData, submit
 from data_keys import (
@@ -68,28 +69,64 @@ def main():
             # ------------------------------------------------------------
             # ----------------Player Algorithm goes here------------------
             solution = {LK.locations: {}}
+            print(f'Number of locations is: {len(mapEntity[LK.locations])}')
 
             for key in mapEntity[LK.locations]:
                 location = mapEntity[LK.locations][key]
                 name = location[LK.locationName]
-                salesVolume = location[LK.salesVolume]
-                footfall_scale = location[LK.footfall_scale]
 
-                if salesVolume > 100:
-                    solution[LK.locations][name] = {
+                solution[LK.locations][name] = {
                         LK.f9100Count: 1,
-                        LK.f3100Count: 0,
-                    }
-                elif footfall_scale > 0:
-                    solution[LK.locations][name] = {
-                        LK.f9100Count: 0,
                         LK.f3100Count: 1,
                     }
+                
+            best_score = calculateScore(mapName, solution, mapEntity, generalData)[SK.gameScore][SK.total]
+            best_solution = deepcopy(solution)
+
+            while True:
+                repeat = False
+
+                for key in mapEntity[LK.locations]:
+                    location = mapEntity[LK.locations][key]
+                    name = location[LK.locationName]
+                    
+                    working_score = 0
+                    working_solution = deepcopy(best_solution)
+
+                    for bigcount in range(6):
+                        for smallcount in range(6):
+                            iteration_solution = deepcopy(working_solution)
+
+                            if bigcount == smallcount == 0:
+                                if name in iteration_solution[LK.locations]:
+                                    del iteration_solution[LK.locations][name]
+                            else:
+                                iteration_solution[LK.locations][name] = {
+                                    LK.f9100Count: bigcount,
+                                    LK.f3100Count: smallcount
+                                }
+
+                            iteration_score = calculateScore(mapName, iteration_solution, mapEntity, generalData)[SK.gameScore][SK.total]
+
+                            if iteration_score > working_score:
+                                working_score = iteration_score
+                                working_solution = deepcopy(iteration_solution)
+
+                    if working_score > best_score:
+                        print(f'When working on {name} we improved the score from {best_score} to {working_score}')
+                        best_score = working_score
+                        best_solution = deepcopy(working_solution)
+                        repeat = True
+                        break
+
+                if not repeat:
+                    break
+
             # ----------------End of player code--------------------------
             # ------------------------------------------------------------
 
             # Score solution locally
-            score = calculateScore(mapName, solution, mapEntity, generalData)
+            score = calculateScore(mapName, best_solution, mapEntity, generalData)
 
             id_ = score[SK.gameId]
             print(f"Storing  game with id {id_}.")
