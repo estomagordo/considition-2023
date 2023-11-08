@@ -90,7 +90,6 @@ def main():
                     location = mapEntity[LK.locations][key]
                     name = location[LK.locationName]
                     
-                    working_score = 0
                     working_solution = deepcopy(best_solution)
 
                     for bigcount in range(6):
@@ -108,16 +107,11 @@ def main():
 
                             iteration_score = calculateScore(mapName, iteration_solution, mapEntity, generalData)[SK.gameScore][SK.total]
 
-                            if iteration_score > working_score:
-                                working_score = iteration_score
-                                working_solution = deepcopy(iteration_solution)
-
-                    if working_score > best_score:
-                        print(f'When working on {name} we improved the score from {best_score} to {working_score}')
-                        best_score = working_score
-                        best_solution = deepcopy(working_solution)
-                        repeat = True
-                        break
+                            if iteration_score > best_score:
+                                print(f'When working on {name} we improved the score from {best_score} to {iteration_score}')
+                                best_score = iteration_score
+                                best_solution = deepcopy(iteration_solution)
+                                repeat = True
 
                 if not repeat:
                     break
@@ -139,7 +133,7 @@ def main():
             # Submit and and get score from Considition app
             print(f"Submitting solution to Considtion 2023 \n")
 
-            scoredSolution = submit(mapName, solution, api_key)
+            scoredSolution = submit(mapName, best_solution, api_key)
             if scoredSolution:
                 print("Successfully submitted game")
                 print(f"id: {scoredSolution[SK.gameId]}")
