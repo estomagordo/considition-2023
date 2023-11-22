@@ -14,9 +14,17 @@ from data_keys import (
 
 api_key = ''
 game_folder = "my_games"
+bestfile = 'best.txt'
 
 
 def main():
+    bestpermap = {}
+
+    with open(bestfile) as f:
+        for line in f:
+            city, score = line.split()
+            bestpermap[city] = float(score)
+
     if not os.path.exists("my_games"):
         print(f"Creating folder {game_folder}")
         os.makedirs(game_folder)
@@ -74,6 +82,8 @@ def main():
         ##Get non map specific data from Considition endpoint
         generalData = getGeneralData()
 
+        map_record = 0 if mapName not in bestpermap else bestpermap[mapName]
+
         if mapEntity and generalData:
             # ------------------------------------------------------------
             # ----------------Player Algorithm goes here------------------
@@ -114,7 +124,8 @@ def main():
                                     LK.f3100Count: smallcount
                                 }
 
-                            iteration_score = calculateScore(mapName, iteration_solution, mapEntity, generalData)[SK.gameScore][SK.total]
+                            sco = calculateScore(mapName, iteration_solution, mapEntity, generalData)
+                            iteration_score = sco[SK.gameScore][SK.total]
 
                             if iteration_score > best_score:
                                 print(f'When working on {name} we improved the score from {best_score} to {iteration_score}')
@@ -122,32 +133,35 @@ def main():
                                 best_solution = deepcopy(iteration_solution)
                                 repeat = True
 
+                                if best_score > map_record:
+                                    print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
+                                    map_record = best_score
+
+                                    id_ = sco[SK.gameId]
+                                    print(f"Storing game with id {id_}.")
+                                    print(f"Enter {id_} into visualization.ipynb for local vizualization ")
+
+                                    # Store solution locally for visualization
+                                    with open(f"{game_folder}/{id_}.json", "w", encoding="utf8") as f:
+                                        json.dump(sco, f, indent=4)
+
+                                    # Submit and and get score from Considition app
+                                    print(f"Submitting solution to Considtion 2023 \n")
+
+                                    scoredSolution = submit(mapName, best_solution, api_key)
+                                    if scoredSolution:
+                                        print("Successfully submitted game")
+                                        print(f"id: {scoredSolution[SK.gameId]}")
+                                        print(f"Score: {scoredSolution[SK.gameScore]}")
+
+                                        with open(bestfile, 'w') as g:
+                                            for k, v in bestpermap.items():
+                                                g.write(f'{k} {v}\n')
+
                 if not repeat:
                     break
 
-            # ----------------End of player code--------------------------
-            # ------------------------------------------------------------
-
-            # Score solution locally
-            score = calculateScore(mapName, best_solution, mapEntity, generalData)
-            print(f"Score: {score[SK.gameScore]}")
-            id_ = score[SK.gameId]
-            print(f"Storing game with id {id_}.")
-            print(f"Enter {id_} into visualization.ipynb for local vizualization ")
-
-            # Store solution locally for visualization
-            with open(f"{game_folder}/{id_}.json", "w", encoding="utf8") as f:
-                json.dump(score, f, indent=4)
-
-            # Submit and and get score from Considition app
-            print(f"Submitting solution to Considtion 2023 \n")
-
-            scoredSolution = submit(mapName, best_solution, api_key)
-            if scoredSolution:
-                print("Successfully submitted game")
-                print(f"id: {scoredSolution[SK.gameId]}")
-                print(f"Score: {scoredSolution[SK.gameScore]}")
-
+            print('ending game')
 
 if __name__ == "__main__":
     main()
