@@ -12,6 +12,8 @@ class MapNames:
     london = "london"
     linkoping = "linkoping"
     berlin = "berlin"
+    sSandbox = "s-sandbox"
+    gSandbox = "g-sandbox"
 
 
 @dataclass
@@ -27,6 +29,22 @@ class LocationKeys:
     leasingCost = "leasingCost"
     revenue = "revenue"
     footfall_scale = 'footfallScale'
+    co2Savings = "gramCo2Savings"
+
+
+@dataclass
+class HotspotKeys:
+    spread = "spread"
+    hotspots = "hotspots"
+
+
+@dataclass
+class MapKeys:
+    border = "border"
+    longitudeMax = "longitudeMax"
+    longitudeMin = "longitudeMin"
+    latitudeMax = "latitudeMax"
+    latitudeMin = "latitudeMin"
 
 
 @dataclass
@@ -65,7 +83,13 @@ class GeneralKeys:
     co2PerUnitInGrams = "co2PerUnitInGrams"
     co2PricePerKiloInSek = "co2PricePerKiloInSek"
     locationTypes = "locationTypes"
+    salesVol = "salesVolume"
     type_ = "type"
     refillDistributionRate = "refillDistributionRate"
     refillSalesFactor = "refillSalesFactor"
     staticCo2 = "staticCo2"
+    groceryStoreLarge = "groceryStoreLarge"
+    groceryStore = "groceryStore"
+    convenience = "convenience"
+    gasStation = "gasStation"
+    kiosk = "kiosk"

@@ -7,6 +7,9 @@ from data_keys import (
     MapNames as MN,
     LocationKeys as LK,
     ScoringKeys as SK,
+    HotspotKeys as HK,
+    GeneralKeys as GK,
+    CoordinateKeys as CK,
 )
 
 api_key = ''
@@ -34,6 +37,8 @@ def main():
     print(f"7: {MN.london}")
     print(f"8: {MN.berlin}")
     print(f"9: {MN.linkoping}")
+    print(f"10: {MN.sSandbox}")
+    print(f"11: {MN.gSandbox}")
     option_ = input("Select the map you wish to play: ")
 
     mapName = None
@@ -56,6 +61,10 @@ def main():
             mapName = MN.berlin
         case "9":
             mapName = MN.linkoping
+        case "10":
+            mapName = MN.sSandbox
+        case "11":
+            mapName = MN.gSandbox
         case _:
             print("Invalid choice.")
 
@@ -121,9 +130,9 @@ def main():
 
             # Score solution locally
             score = calculateScore(mapName, best_solution, mapEntity, generalData)
-
+            print(f"Score: {score[SK.gameScore]}")
             id_ = score[SK.gameId]
-            print(f"Storing  game with id {id_}.")
+            print(f"Storing game with id {id_}.")
             print(f"Enter {id_} into visualization.ipynb for local vizualization ")
 
             # Store solution locally for visualization
