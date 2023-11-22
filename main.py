@@ -15,7 +15,7 @@ from data_keys import (
 api_key = ''
 game_folder = "my_games"
 bestfile = 'best.txt'
-
+max_locations = 2
 
 def main():
     bestpermap = {}
@@ -111,8 +111,8 @@ def main():
                     
                     working_solution = deepcopy(best_solution)
 
-                    for bigcount in range(6):
-                        for smallcount in range(6):
+                    for bigcount in range(max_locations + 1):
+                        for smallcount in range(max_locations + 1):
                             iteration_solution = deepcopy(working_solution)
 
                             if bigcount == smallcount == 0:
