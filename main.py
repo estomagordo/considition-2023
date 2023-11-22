@@ -136,6 +136,7 @@ def main():
                                 if best_score > map_record:
                                     print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
                                     map_record = best_score
+                                    bestpermap[mapName] = best_score
 
                                     id_ = sco[SK.gameId]
                                     print(f"Storing game with id {id_}.")
