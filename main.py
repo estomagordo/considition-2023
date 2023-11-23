@@ -108,7 +108,12 @@ def main():
             best_solution = deepcopy(solution)
 
             def post_score(sco, best_score, best_solution):
+                location_count = len(best_solution)
+                small_count = sum(v[LK.f3100Count] for v in best_solution.values())
+                big_count = sum(v[LK.f9100Count] for v in best_solution.values())
+
                 print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
+                print(f'It uses {small_count} small machines and {big_count} big machines over {location_count} locations.')
                 bestpermap[mapName] = best_score
 
                 id_ = sco[SK.gameId]
