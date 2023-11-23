@@ -100,7 +100,7 @@ def main():
                 name = location[LK.locationName]
 
                 solution[LK.locations][name] = {
-                        LK.f9100Count: 1,
+                        LK.f9100Count: 0,
                         LK.f3100Count: 1,
                     }
                 
