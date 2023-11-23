@@ -1,7 +1,7 @@
 import os
 import json
 from copy import deepcopy
-from time import time
+from time import sleep, time
 from scoring import calculateScore
 from api import getGeneralData, getMapData, submit
 from data_keys import (
@@ -190,6 +190,9 @@ def main():
                 post_score(*pending)
                 requests = requests[1:] + [time()]
                 pending = None
+            elif pending:
+                sleep(max_requests_time)
+                post_score(*pending)
 
             print('ending game')
 
