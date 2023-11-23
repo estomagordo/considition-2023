@@ -1,3 +1,4 @@
 linkoping 698.1
 uppsala 2402.89
 vasteras 1490.12
+goteborg 6115.39
