@@ -1,6 +1,7 @@
 import os
 import json
 from copy import deepcopy
+from time import time
 from scoring import calculateScore
 from api import getGeneralData, getMapData, submit
 from data_keys import (
@@ -16,9 +17,12 @@ api_key = ''
 game_folder = "my_games"
 bestfile = 'best.txt'
 max_locations = 2
+max_requests = 5
+max_requests_time = 11.0
 
 def main():
     bestpermap = {}
+    requests = [time(), time()] # bit of safety, assuming that creating the game is one API call but you never know.
 
     with open(bestfile) as f:
         for line in f:
@@ -102,6 +106,31 @@ def main():
             best_score = calculateScore(mapName, solution, mapEntity, generalData)[SK.gameScore][SK.total]
             best_solution = deepcopy(solution)
 
+            def post_score(sco, best_score):
+                print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
+                bestpermap[mapName] = best_score
+
+                id_ = sco[SK.gameId]
+                print(f"Storing game with id {id_}.")
+                print(f"Enter {id_} into visualization.ipynb for local vizualization ")
+
+                # Store solution locally for visualization
+                with open(f"{game_folder}/{id_}.json", "w", encoding="utf8") as f:
+                    json.dump(sco, f, indent=4)
+
+                # Submit and and get score from Considition app
+                print(f"Submitting solution to Considtion 2023 \n")
+
+                scoredSolution = submit(mapName, best_solution, api_key)
+                if scoredSolution:
+                    print("Successfully submitted game")
+                    print(f"id: {scoredSolution[SK.gameId]}")
+                    print(f"Score: {scoredSolution[SK.gameScore]}")
+
+                    with open(bestfile, 'w') as g:
+                        for k, v in bestpermap.items():
+                            g.write(f'{k} {v}\n')
+
             while True:
                 repeat = False
 
@@ -133,31 +162,10 @@ def main():
                                 best_solution = deepcopy(iteration_solution)
                                 repeat = True
 
+                                map_record = best_score
+
                                 if best_score > map_record:
-                                    print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
-                                    map_record = best_score
-                                    bestpermap[mapName] = best_score
-
-                                    id_ = sco[SK.gameId]
-                                    print(f"Storing game with id {id_}.")
-                                    print(f"Enter {id_} into visualization.ipynb for local vizualization ")
-
-                                    # Store solution locally for visualization
-                                    with open(f"{game_folder}/{id_}.json", "w", encoding="utf8") as f:
-                                        json.dump(sco, f, indent=4)
-
-                                    # Submit and and get score from Considition app
-                                    print(f"Submitting solution to Considtion 2023 \n")
-
-                                    scoredSolution = submit(mapName, best_solution, api_key)
-                                    if scoredSolution:
-                                        print("Successfully submitted game")
-                                        print(f"id: {scoredSolution[SK.gameId]}")
-                                        print(f"Score: {scoredSolution[SK.gameScore]}")
-
-                                        with open(bestfile, 'w') as g:
-                                            for k, v in bestpermap.items():
-                                                g.write(f'{k} {v}\n')
+                                    post_score(sco, best_score)
 
                 if not repeat:
                     break
