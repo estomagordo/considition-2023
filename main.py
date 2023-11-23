@@ -171,7 +171,7 @@ def main():
                                 if best_score > map_record:
                                     map_record = best_score
 
-                                    if len(requests) < max_requests or time()-max_requests[0] > max_requests_time:
+                                    if len(requests) < max_requests or time() - requests[0] > max_requests_time:
                                         t = time()
 
                                         if len(requests) == max_requests:
