@@ -1,4 +1,4 @@
-linkoping 698.1
-uppsala 2402.89
-vasteras 1490.12
+linkoping 699.57
+uppsala 2409.06
+vasteras 1497.64
 goteborg 6132.24
