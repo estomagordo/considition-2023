@@ -23,6 +23,7 @@ max_requests_time = 11.0
 def main():
     bestpermap = {}
     requests = [time(), time()] # bit of safety, assuming that creating the game is one API call but you never know.
+    pending = None
 
     with open(bestfile) as f:
         for line in f:
@@ -106,7 +107,7 @@ def main():
             best_score = calculateScore(mapName, solution, mapEntity, generalData)[SK.gameScore][SK.total]
             best_solution = deepcopy(solution)
 
-            def post_score(sco, best_score):
+            def post_score(sco, best_score, best_solution):
                 print(f'We achieved a new record of {best_score} for {mapName} and will now record it.')
                 bestpermap[mapName] = best_score
 
@@ -132,6 +133,11 @@ def main():
                             g.write(f'{k} {v}\n')
 
             while True:
+                if pending and time() - requests[0] > max_requests_time:
+                    post_score(*pending)
+                    requests = requests[1:] + [time()]
+                    pending = None
+
                 repeat = False
 
                 for key in mapEntity[LK.locations]:
@@ -162,13 +168,28 @@ def main():
                                 best_solution = deepcopy(iteration_solution)
                                 repeat = True
 
-                                map_record = best_score
-
                                 if best_score > map_record:
-                                    post_score(sco, best_score)
+                                    map_record = best_score
+
+                                    if len(requests) < max_requests or time()-max_requests[0] > max_requests_time:
+                                        t = time()
+
+                                        if len(requests) == max_requests:
+                                            requests = requests[1:] + [t]
+                                        else:
+                                            requests.append(t)
+
+                                        post_score(sco, best_score, best_solution)
+                                    else:
+                                        pending = (deepcopy(sco), deepcopy(best_score), deepcopy(best_solution))
 
                 if not repeat:
                     break
+
+            if pending and time() - requests[0] > max_requests_time:
+                post_score(*pending)
+                requests = requests[1:] + [time()]
+                pending = None
 
             print('ending game')
 
