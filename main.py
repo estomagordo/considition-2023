@@ -137,6 +137,11 @@ def main():
                         for k, v in bestpermap.items():
                             g.write(f'{k} {v}\n')
 
+                    jsondumpfilename = 'latest_dump.txt'
+
+                    with open(jsondumpfilename, 'w') as g:
+                        g.write(json.dumps(best_solution))
+
             while True:
                 if pending and time() - requests[0] > max_requests_time:
                     post_score(*pending)
